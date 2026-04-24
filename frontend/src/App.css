@@ -1,36 +1,87 @@
 .app {
   background-color: #121212;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   color: white;
+  padding-top: 40px;
 }
 
+/* 🎯 CARD AREA */
 .cardContainer {
   position: relative;
   width: 300px;
-  height: 400px;
+  height: 450px;
+  margin-top: 40px;
 }
 
-/* 🔥 KRİTİK: tüm kartlar aynı yerde üst üste */
+/* 🎯 SWIPE CARDS */
 .card {
-  width: 300px;
-  height: 400px;
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
 
   background-color: #333;
   border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  overflow: hidden;
 
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  padding-bottom: 20px;
 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   cursor: grab;
   touch-action: none;
+}
+
+/* 🎬 POSTER */
+.poster {
+  width: 100%;
+  height: 85%;
+  object-fit: cover;
+}
+
+/* 📋 LIST */
+.listContainer {
+  margin-top: 40px;
+  display: flex;
+  gap: 50px;
+}
+
+.listBox {
+  width: 200px;
+}
+
+.movieCard {
+  background: #222;
+  padding: 8px 12px;
+  margin: 6px 0;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.movieCard:hover {
+  transform: scale(1.05);
+}
+
+/* 💥 MATCH POPUP */
+.matchPopup {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #111;
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  font-size: 24px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
 }
