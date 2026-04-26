@@ -25,50 +25,102 @@
   top: 0;
   left: 0;
 
-  background-color: #333;
+  background-color: #1e1e1e; /* Biraz daha koyu bir gri */
   border-radius: 20px;
-  overflow: hidden;
+  overflow: visible;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Üstten başlasın */
 
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   cursor: grab;
   touch-action: none;
+  border: 1px solid #333; /* Hafif border */
 }
 
-/* 🎬 POSTER */
-.poster {
+/* 🎬 POSTER IMG (Yeni Sınıf) */
+.posterImg {
   width: 100%;
-  height: 85%;
+  height: 60%;
   object-fit: cover;
+  border-bottom: 2px solid #333;
+}
+
+.card h3 {
+  margin: 10px 0 5px 0;
+  font-size: 18px;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.card h4 {
+  margin: 0 0 10px 0;
+  color: #f1c40f; /* Altın sarısı yıldız */
+}
+
+/* 💥 YENİ: SWIPE LABELS (LIKE/NOPE) */
+.swipeLabel {
+  position: absolute;
+  top: 20px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  z-index: 20; /* Her şeyin üstünde */
+  pointer-events: none; /* Tıklamaları engelle */
+}
+
+.swipeLabel.like {
+  left: 20px;
+  color: #2ecc71; /* Yeşil */
+  border: 3px solid #2ecc71;
+  transform: rotate(-15deg); /* Hafif eğik */
+}
+
+.swipeLabel.nope {
+  right: 20px;
+  color: #e74c3c; /* Kırmızı */
+  border: 3px solid #e74c3c;
+  transform: rotate(15deg); /* Hafif eğik */
 }
 
 /* 📋 LIST */
 .listContainer {
-  margin-top: 40px;
+  margin-top: 50px;
   display: flex;
-  gap: 50px;
+  gap: 30px;
+  padding-bottom: 40px;
 }
 
 .listBox {
-  width: 200px;
+  width: 250px;
+}
+
+.listBox h3 {
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .movieCard {
-  background: #222;
-  padding: 8px 12px;
-  margin: 6px 0;
+  background: #1e1e1e;
+  padding: 10px 15px;
+  margin: 8px 0;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   font-size: 14px;
-  transition: 0.2s;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
 .movieCard:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
+  border-color: #444;
+  background-color: #222;
 }
 
 /* 💥 MATCH POPUP */
@@ -77,11 +129,141 @@
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #111;
+  background: rgba(17, 17, 17, 0.95); /* Hafif şeffaf */
   color: white;
+  padding: 40px;
+  border-radius: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  z-index: 100;
+  border: 2px solid #2ecc71; /* Match yeşili border */
+}
+
+.matchPopup button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #2ecc71;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* MODAL STYLES (Eksik olanları ekledim) */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background-color: #1e1e1e;
   padding: 30px;
   border-radius: 20px;
-  font-size: 24px;
+  width: 80%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid #333;
+}
+
+.modalContent p {
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.5;
   text-align: center;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.modalContent button {
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.genres {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.genreBadge {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: #aaa;
+  border: 1px solid #444;
+}
+.matchOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(10px);
+}
+
+.matchContent {
+  text-align: center;
+  animation: celebrate 0.5s ease-out;
+}
+
+.matchTitle {
+  font-size: 40px;
+  color: #2ecc71;
+  text-shadow: 0 0 20px rgba(46, 204, 113, 0.5);
+  margin-bottom: 10px;
+}
+
+.matchedPoster {
+  width: 220px;
+  border-radius: 15px;
+  border: 4px solid #2ecc71;
+  margin: 20px 0;
+  box-shadow: 0 0 40px rgba(46, 204, 113, 0.3);
+}
+
+.matchedMovieName {
+  font-size: 24px;
+  margin-bottom: 30px;
+}
+
+.keepSwiping {
+  background: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.keepSwiping:hover {
+  background: white;
+  color: black;
+}
+
+@keyframes celebrate {
+  0% { transform: scale(0.5); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
