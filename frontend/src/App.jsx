@@ -9,6 +9,7 @@ import {
   onSnapshot,
   arrayUnion
 } from "firebase/firestore"
+import { getDoc } from "firebase/firestore";
 
 const genreMap = {
   28: "Aksiyon", 12: "Macera", 16: "Animasyon", 35: "Komedi", 80: "Suç",
@@ -28,28 +29,52 @@ function App() {
   const [matchedMovie, setMatchedMovie] = useState(null)
   const [lastShownMatchId, setLastShownMatchId] = useState(null)
 
-  const roomRef = doc(db, "rooms", "room1")
+  const [roomId, setRoomId] = useState(null);
 
   const params = new URLSearchParams(window.location.search);
   const userId = params.get("user") || "user1"; 
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
 
+  let id = params.get("room");
+  const user = params.get("user") || "user1";
+
+  if (!id) {
+    id = crypto.randomUUID();
+
+    window.location.href = `/?room=${id}&user=${user}`;
+    return;
+  }
+
+  setRoomId(id);
+}, []);
+const roomRef = roomId ? doc(db, "rooms", roomId) : null;
   // 🔥 ROOM INIT
   useEffect(() => {
-    const initRoom = async () => {
-      try {
+  const initRoom = async () => {
+    try {
+      const snap = await getDoc(roomRef);
+
+      if (!snap.exists()) {
         await setDoc(roomRef, {
           user1Likes: [],
           user2Likes: [],
           matches: []
-        }, { merge: true });
-      } catch (err) {
-        console.error("Room init hatası:", err);
+        });
+        console.log("✅ ROOM CREATED");
+      } else {
+        console.log("ℹ️ ROOM ZATEN VAR");
       }
-    };
 
+    } catch (err) {
+      console.error("Room init hatası:", err);
+    }
+  };
+
+  if (roomRef) {
     initRoom();
-  }, []);
-
+  }
+}, [roomRef]);
   // 1. Filmleri API'den Çek
   useEffect(() => {
     fetch(`https://api.themoviedb.org/3/movie/popular?api_key=912b86763092646e87fdf7fe4bf940e5`)
@@ -75,23 +100,30 @@ function App() {
       if (!snap.exists()) return;
 
       const data = snap.data();
-
+ console.log("🔥 SNAPSHOT DATA:", data);
       const u1 = Array.isArray(data.user1Likes) ? data.user1Likes.map(Number) : [];
       const u2 = Array.isArray(data.user2Likes) ? data.user2Likes.map(Number) : [];
+ const matches = Array.isArray(data.matches) ? data.matches.map(Number) : [];
+       console.log("u1:", u1);
+  console.log("u2:", u2);
 
-      const commonIds = u1.filter(id => u2.includes(id));
+  const commonIds = u1.filter(id => u2.includes(id));
+ console.log("COMMON IDS:", commonIds);
+     if (commonIds.length > 0) {
+  const lastMatchId = commonIds[commonIds.length - 1];
 
-      if (commonIds.length > 0) {
-        const lastMatchId = commonIds[commonIds.length - 1];
+  if (lastMatchId === lastShownMatchId) return;
 
-        if (lastMatchId === lastShownMatchId) return;
+  const foundMovie = movies.find(
+    m => Number(m.id) === Number(lastMatchId)
+  );
 
-        const foundMovie = movies.find(m => Number(m.id) === Number(lastMatchId));
+  if (foundMovie) {
+    setMatchedMovie(foundMovie);
+    setShowMatch(true);
 
-        if (foundMovie) {
-          setMatchedMovie(foundMovie);
-          setShowMatch(true);
-          setLastShownMatchId(lastMatchId);
+    setLastShownMatchId(lastMatchId); // 🔥 BU ÇOK ÖNEMLİ
+  
 
           try {
             await updateDoc(roomRef, {
@@ -109,6 +141,7 @@ function App() {
 
   // Swipe
   const handleSwipe = async (direction) => {
+    
     const currentMovie = movies[index];
     if (!currentMovie || !userId) return;
 
@@ -116,13 +149,19 @@ function App() {
       setLikedMovies(prev => [...prev, currentMovie]);
 
       try {
+         console.log("🔥 WRITE START");
+  console.log("ROOM:", roomRef?.path);
+  console.log("USER:", userId);
+  console.log("MOVIE ID:", currentMovie.id);
+
         const field = userId === "user1" ? "user1Likes" : "user2Likes";
         await updateDoc(roomRef, {
           [field]: arrayUnion(currentMovie.id)
         });
-      } catch (err) {
-        console.error("Yazma hatası:", err);
-      }
+        console.log("✅ WRITE SUCCESS");
+} catch (err) {
+  console.error("❌ FIRESTORE ERROR:", err);
+}
     } else {
       setDislikedMovies(prev => [...prev, currentMovie]);
     }
