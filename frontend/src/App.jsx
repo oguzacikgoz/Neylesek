@@ -248,6 +248,7 @@ const roomRef = roomId ? doc(db, "rooms", roomId) : null;
                 />
                 <h3>{movie.title}</h3>
                 <h4>⭐ {movie.rating?.toFixed(1)}</h4>
+                <p>{movie.genres.join(", ")}</p>
               </motion.div>
             )
           })
@@ -258,13 +259,13 @@ const roomRef = roomId ? doc(db, "rooms", roomId) : null;
 
       <div className="listContainer">
         <div className="listBox">
-          <h3>Beğendiklerin 👍</h3>
+          <h3>Likes 👍</h3>
           {likedMovies.map((m, i) => (
             <div key={i} className="movieCard">{m.title}</div>
           ))}
         </div>
         <div className="listBox">
-          <h3>Beğenmediklerin 👎</h3>
+          <h3>Dislikes 👎</h3>
           {dislikedMovies.map((m, i) => (
             <div key={i} className="movieCard">{m.title}</div>
           ))}
